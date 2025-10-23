@@ -188,8 +188,10 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
         } else {
             if (domain != NULL) {
                 result = _client->connect(this->domain, this->port);
+                DEBUG_PSC_PRINTF("::connect a this->domain %s port %d result %d\n", this->domain, this->port,  result);
             } else {
                 result = _client->connect(this->ip, this->port);
+                DEBUG_PSC_PRINTF("::connect b this->ip %s port %d\n", this->ip.toString().c_str(), this->port);
             }
         }
 
@@ -255,8 +257,11 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
             lastInActivity = lastOutActivity = millis();
 
             while (!_client->available()) {
+                yield();
                 unsigned long t = millis();
                 if (t-lastInActivity >= ((int32_t) this->socketTimeout*1000UL)) {
+                    DEBUG_PSC_PRINTF("::connect socketTimeout (%d)\n", this->socketTimeout);
+
                     _state = MQTT_CONNECTION_TIMEOUT;
                     _client->stop();
                     return false;
@@ -291,6 +296,7 @@ boolean PubSubClient::readByte(uint8_t * result) {
      yield();
      uint32_t currentMillis = millis();
      if(currentMillis - previousMillis >= ((int32_t) this->socketTimeout * 1000)){
+        DEBUG_PSC_PRINTF("::readByte socketTimeout\n");
        return false;
      }
    }
@@ -372,6 +378,7 @@ boolean PubSubClient::loop() {
         unsigned long t = millis();
         if ((t - lastInActivity > this->keepAlive*1000UL) || (t - lastOutActivity > this->keepAlive*1000UL)) {
             if (pingOutstanding) {
+                DEBUG_PSC_PRINTF("::loop keepAlive timeout\n");
                 this->_state = MQTT_CONNECTION_TIMEOUT;
                 _client->stop();
                 return false;

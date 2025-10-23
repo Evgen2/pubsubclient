@@ -1,5 +1,7 @@
 # Arduino Client for MQTT
 
+Version 2.8.1
+
 This library provides a client for doing simple publish/subscribe messaging with
 a server that supports MQTT.
 

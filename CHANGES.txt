@@ -1,3 +1,6 @@
+2.8.1
+	* add yield(); and some debug messages
+
 2.8
    * Add setBufferSize() to override MQTT_MAX_PACKET_SIZE
    * Add setKeepAlive() to override MQTT_KEEPALIVE
