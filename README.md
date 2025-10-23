@@ -3,6 +3,9 @@
 This library provides a client for doing simple publish/subscribe messaging with
 a server that supports MQTT.
 
+## Notes of this fork
+This is a fork of the repository knolleary/pubsubclient v2.8, which was last updated in May 20, 2020. 
+It looks like these sources need some work and  it seems to be the most advanced fork is https://github.com/hmueller01/pubsubclient3
 ## Examples
 
 The library comes with a number of example sketches. See File > Examples > PubSubClient
