@@ -179,6 +179,7 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
 }
 
 boolean PubSubClient::connect(const char *id, const char *user, const char *pass, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage, boolean cleanSession) {
+    if (!_client) return false;  // do not crash if client not set
     if (!connected()) {
         int result = 0;
 
@@ -255,6 +256,7 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
             write(MQTTCONNECT,this->buffer,length-MQTT_MAX_HEADER_SIZE);
 
             lastInActivity = lastOutActivity = millis();
+            pingOutstanding = false;                
 
             while (!_client->available()) {
                 yield();
@@ -381,6 +383,7 @@ boolean PubSubClient::loop() {
                 DEBUG_PSC_PRINTF("::loop keepAlive timeout\n");
                 this->_state = MQTT_CONNECTION_TIMEOUT;
                 _client->stop();
+                pingOutstanding = false;                
                 return false;
             } else {
                 this->buffer[0] = MQTTPINGREQ;
@@ -665,6 +668,7 @@ boolean PubSubClient::unsubscribe(const char* topic) {
 }
 
 void PubSubClient::disconnect() {
+ if (_client) {
     this->buffer[0] = MQTTDISCONNECT;
     this->buffer[1] = 0;
     _client->write(this->buffer,2);
@@ -672,6 +676,8 @@ void PubSubClient::disconnect() {
     _client->flush();
     _client->stop();
     lastInActivity = lastOutActivity = millis();
+	}
+    pingOutstanding = false;                
 }
 
 uint16_t PubSubClient::writeString(const char* string, uint8_t* buf, uint16_t pos) {
@@ -699,6 +705,7 @@ boolean PubSubClient::connected() {
                 this->_state = MQTT_CONNECTION_LOST;
                 _client->flush();
                 _client->stop();
+                pingOutstanding = false;                
             }
         } else {
             return this->_state == MQTT_CONNECTED;
