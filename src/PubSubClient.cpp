@@ -491,7 +491,6 @@ boolean PubSubClient::publish_P(const char* topic, const uint8_t* payload, unsig
     unsigned int rc = 0;
     uint16_t tlen;
     unsigned int pos = 0;
-    unsigned int i;
     uint8_t header;
     unsigned int len;
     int expectedLength;
@@ -522,10 +521,13 @@ boolean PubSubClient::publish_P(const char* topic, const uint8_t* payload, unsig
 
     rc += _client->write(this->buffer,pos);
 
+    rc += _client->write(payload, plength);
+
+/*    
     for (i=0;i<plength;i++) {
         rc += _client->write((char)pgm_read_byte_near(payload + i));
     }
-
+*/
     lastOutActivity = millis();
 
     expectedLength = 1 + llen + 2 + tlen + plength;
