@@ -293,6 +293,7 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
 
 // reads a byte into result
 boolean PubSubClient::readByte(uint8_t * result) {
+   if (!_client) return false;  // do not crash if client not set
    uint32_t previousMillis = millis();
    while(!_client->available()) {
      yield();
