@@ -185,6 +185,7 @@ public:
    boolean loop();
    boolean connected();
    int state();
+   void  (* callback_loop)(int src);
 
 };
 
