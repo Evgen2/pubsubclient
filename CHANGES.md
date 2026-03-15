@@ -1,7 +1,7 @@
 2.8.2 
    * fixes
    * use callback_loop() instead of yield()
-     callback_loop should be poinet to function like that
+     callback_loop should be pointer to function like that
    ```c
 void loop_callback(int src)
 { static unsigned long int t0 = 0;
@@ -10,6 +10,7 @@ void loop_callback(int src)
   if(millis() - t0 > max_time_use)
   {
     Watchdogsreset();
+//other stuff
     t0  = millis();
   }
 }
