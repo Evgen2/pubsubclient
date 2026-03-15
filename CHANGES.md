@@ -2,7 +2,7 @@
    * fixes
    * use callback_loop() instead of yield()
      callback_loop should be poinet to function like that
-
+   ```c
 void loop_callback(int src)
 { static unsigned long int t0 = 0;
   const unsigned int max_time_use = 300;
@@ -14,7 +14,7 @@ void loop_callback(int src)
   }
 }
 
-
+   ```
 2.8.1
    * add yield(); and some debug messages
 
