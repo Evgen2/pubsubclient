@@ -1,5 +1,19 @@
 2.8.2 
    * fixes
+   * use callback_loop() instead of yield()
+     callback_loop should be poinet to function like that
+
+void loop_callback(int src)
+{ static unsigned long int t0 = 0;
+  const unsigned int max_time_use = 300;
+  dt = t - t0;
+  if(millis() - t0 > max_time_use)
+  {
+    Watchdogsreset();
+    t0  = millis();
+  }
+}
+
 
 2.8.1
    * add yield(); and some debug messages

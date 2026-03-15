@@ -276,17 +276,18 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
             pingOutstanding = false;                
 
             while (!_client->available()) {
-                yield();
-                unsigned long t = millis();
-                if (t-lastInActivity >= ((int32_t) this->socketTimeout*1000UL)) {
+                if(callback_loop)
+                        callback_loop(2);
+		else
+	                yield();
+
+                if (millis()-lastInActivity >= ((int32_t) this->socketTimeout*1000UL)) {
                     DEBUG_PSC_PRINTF("::connect socketTimeout (%d)\n", this->socketTimeout);
 
                     _state = MQTT_CONNECTION_TIMEOUT;
                     _client->stop();
                     return false;
                 }
-                if(callback_loop)
-                        callback_loop(2);
             }
             uint8_t llen;
             uint32_t len = readPacket(&llen);
@@ -315,14 +316,14 @@ boolean PubSubClient::readByte(uint8_t * result) {
    if (!_client) return false;  // do not crash if client not set
    uint32_t previousMillis = millis();
    while(!_client->available()) {
-     yield();
-     uint32_t currentMillis = millis();
-     if(currentMillis - previousMillis >= ((int32_t) this->socketTimeout * 1000)){
+    if(callback_loop)
+         callback_loop(3);
+    else
+	 yield();
+     if(millis() - previousMillis >= ((int32_t) this->socketTimeout * 1000)){
         DEBUG_PSC_PRINTF("::readByte socketTimeout\n");
        return false;
      }
-    if(callback_loop)
-            callback_loop(3);
    }
    *result = _client->read();
    return true;
