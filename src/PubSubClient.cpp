@@ -277,8 +277,8 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
 
             while (!_client->available()) {
                 if(callback_loop)
-                        callback_loop(2);
-		else
+                    callback_loop(2);
+                else
 	                yield();
 
                 if (millis()-lastInActivity >= ((int32_t) this->socketTimeout*1000UL)) {
@@ -399,12 +399,13 @@ uint32_t PubSubClient::readPacket(uint8_t* lengthLength) {
 }
 
 boolean PubSubClient::loop() {
-    if (connected()) {
-        unsigned long t = millis();
+    if (connected())
+    {   unsigned long t = millis();
+
         if ((t - lastInActivity > this->keepAlive*1000UL) || (t - lastOutActivity > this->keepAlive*1000UL)) {
             if (pingOutstanding) {
                 DEBUG_PSC_PRINTF("::loop keepAlive timeout (%d)\n", this->keepAlive);
-                DEBUG_PSC_PRINTF("t %ld lastInActivity %ld lastOutActivity %ld\n", t, lastInActivity, lastOutActivity);
+                DEBUG_PSC_PRINTF("dt lastInActivity %ld lastOutActivity %ld\n", t- lastInActivity, t -lastOutActivity);
                 this->_state = MQTT_CONNECTION_TIMEOUT;
                 _client->stop();
                 pingOutstanding = false;                
@@ -414,11 +415,12 @@ boolean PubSubClient::loop() {
                 this->buffer[1] = 0;
                 if(_client->write(this->buffer,2) == 2)
                 {   lastOutActivity = t;
-                    lastInActivity = t; //??
+                    lastInActivity = t; 
                     pingOutstanding = true;
                 }
             }
         }
+
         if (_client->available()) {
             uint8_t llen;
             uint16_t len = readPacket(&llen);
@@ -767,10 +769,10 @@ boolean PubSubClient::connected() {
         rc = (int)_client->connected();
         if (!rc) {
             if (this->_state == MQTT_CONNECTED) {
+                DEBUG_PSC_PRINTF("connected : CONNECTION_LOST at %ld, errno %d\n", millis(), errno);
                 this->_state = MQTT_CONNECTION_LOST;
                 _client->flush();
                 _client->stop();
-                DEBUG_PSC_PRINTF("connected :CONNECTION_LOST at %ld\n", millis());
                 pingOutstanding = false;                
             }
         } else {
